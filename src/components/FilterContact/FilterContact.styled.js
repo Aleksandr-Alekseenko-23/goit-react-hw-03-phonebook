@@ -9,6 +9,7 @@ export const InputPhoneBook = styled.input`
   margin-bottom: 30px;
   font-size: 24px;
   color: orange;
+  padding-left: 20px;
 
   &::placeholder {
     font-size: 24px;
