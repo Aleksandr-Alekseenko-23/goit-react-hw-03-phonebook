@@ -5,7 +5,7 @@ import {
   LabelPhoneBook,
   Button,
 } from './AddForm.styled.js';
-import Icon from './../Assets/img/plus.svg';
+import Icon from './../../Assets/img/plus.svg';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 
@@ -15,22 +15,17 @@ export class AddForm extends Component {
     number: '',
   };
 
-  handleChange = event => {
-    const { name, value } = event.currentTarget;
+  handleChange = ({ currentTarget: { name, value } }) =>
     this.setState({
       [name]: value,
     });
-  };
 
   onHandleSubmit = e => {
     e.preventDefault();
     this.props.onSubmit({ ...this.state, id: nanoid() });
-    this.reset();
-  };
-
-  reset = () => {
     this.setState({ name: '', number: '' });
   };
+
 
   render() {
     const { name, number } = this.state;

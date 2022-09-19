@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Wrapper, Item, Span, Button, Img } from './Contacs.styled.js';
 import Avatar from 'react-avatar';
-import Delete from './../Assets/img/Delete.svg';
+import Delete from './../../Assets/img/Delete.svg';
 import PropTypes from 'prop-types';
 
 function Contacs({ contacts, onDelete }) {

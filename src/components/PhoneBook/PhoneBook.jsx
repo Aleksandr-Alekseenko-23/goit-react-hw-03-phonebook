@@ -7,18 +7,23 @@ import { TitleOne, Wrapper, WrapperContact } from './PhoneBook.styled.js';
 
 export class PhoneBook extends Component {
   state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
+    contacts: [],
     filter: '',
   };
 
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts') || '';
+    const parsedContacts = contacts && JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+  }
   handleSubmit = ({ name, number, id }) => {
-    const allcontacs = this.state.contacts;
-    const isSameContacs = allcontacs.filter(
+    const isSameContacs = this.state.contacts.filter(
       contact =>
         contact.name.toLowerCase() === name.toLowerCase() &&
         contact.number === number
@@ -32,42 +37,24 @@ export class PhoneBook extends Component {
     }
   };
 
-  onChangeFilter = event => {
-    this.setState({ filter: event.currentTarget.value });
-  };
+  onChangeFilter = ({ currentTarget: { value } }) =>
+    this.setState({ filter: value });
 
   getVisibleContact = () => {
     const { contacts, filter } = this.state;
-    const normalizedFilter = filter.toLowerCase();
 
     return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
+      contact.name.toLowerCase().includes(filter.toLowerCase())
     );
   };
 
   deleteContact = contactId => {
     this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+      contacts: prevState.contacts.filter(({ id }) => id !== contactId),
     }));
   };
 
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.contacts !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
-
   render() {
-    const visibleContact = this.getVisibleContact();
-
     return (
       <>
         <TitleOne>Phonebook</TitleOne>
@@ -78,7 +65,10 @@ export class PhoneBook extends Component {
               onChangeFilter={this.onChangeFilter}
               filter={this.state.filter}
             />
-            <Contacs contacts={visibleContact} onDelete={this.deleteContact} />
+            <Contacs
+              contacts={this.getVisibleContact()}
+              onDelete={this.deleteContact}
+            />
           </WrapperContact>
         </Wrapper>
       </>
